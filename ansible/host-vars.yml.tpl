@@ -46,7 +46,7 @@ matrix_nginx_proxy_container_extra_arguments:
   - '--label "traefik.http.routers.matrix-nginx-proxy.entrypoints=websecure"'
 
   # (The 'default' certificate resolver must be defined in Traefik config)
-  - '--label "traefik.http.routers.matrix-nginx-proxy.tls.certresolver=http"'
+  - '--label "traefik.http.routers.matrix-nginx-proxy.tls.certresolver=dns"'
 
   # The Nginx proxy container uses port 8080 internally
   - '--label "traefik.http.services.matrix-nginx-proxy.loadbalancer.server.port=8080"'
@@ -62,7 +62,7 @@ matrix_synapse_container_extra_arguments:
   - '--label "traefik.http.routers.matrix-synapse.entrypoints=synapse"'
 
   # (The 'default' certificate resolver must be defined in Traefik config)
-  - '--label "traefik.http.routers.matrix-synapse.tls.certResolver=http"'
+  - '--label "traefik.http.routers.matrix-synapse.tls.certResolver=dns"'
 
   # The Synapse container uses port 8048 internally
   - '--label "traefik.http.services.matrix-synapse.loadbalancer.server.port=8048"'
@@ -92,7 +92,7 @@ matrix_synapse_admin_container_extra_arguments:
     - '--label "traefik.http.routers.matrix-synapse-admin.entrypoints=websecure"'
 
     # (The 'default' certificate resolver must be defined in Traefik config)
-    - '--label "traefik.http.routers.matrix-synapse-admin.tls.certResolver=http"'
+    - '--label "traefik.http.routers.matrix-synapse-admin.tls.certResolver=dns"'
 
     # The Synapse Admin container uses port 80 by default
     - '--label "traefik.http.services.matrix-synapse-admin.loadbalancer.server.port=80"'
