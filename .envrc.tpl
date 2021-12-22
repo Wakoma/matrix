@@ -6,16 +6,20 @@ export ROOT_SSH_USER=root
 export PRIMARY_SSH_USER=ubuntu
 export IMAGE_NAME=matrix-base
 
-export ACME_EMAIL=eric@wakoma.co
+export ACME_EMAIL=
+export ACME_PROVIDER=
+export NAMECHEAP_API_KEY=
+export NAMECHEAP_API_USER=
 export TRAEFIK_BASICAUTH_USERS=
 export DOMAIN=wakoma.net
-export DOMAIN_TRAEFIK=router.meet.${DOMAIN}
-export DOMAIN_NETDATA=monitor.meet.${DOMAIN}
-export DOMAIN_PROMETHEUS=prometheus.meet.${DOMAIN}
+export DOMAIN_TRAEFIK=router.matrix.${DOMAIN}
+export DOMAIN_NETDATA=monitor.matrix.${DOMAIN}
+export DOMAIN_PROMETHEUS=metrics.matrix.${DOMAIN}
+export DOMAIN_GRAFANA=dash.matrix.${DOMAIN}
 export DOMAIN_MATRIX=matrix.${DOMAIN}
-export DOMAIN_ELEMENT=element.${DOMAIN}
+export DOMAIN_ELEMENT=chat.${DOMAIN}
 export DOMAIN_DIMENSION=dimension.${DOMAIN}
-export DOMAIN_JITSI=jitsi.${DOMAIN}
+export DOMAIN_JITSI=meet.${DOMAIN}
 
 export MATRIX_COTURN_TURN_STATIC_AUTH_SECRET=
 export MATRIX_SYNAPSE_MACAROON_SECRET_KEY=
