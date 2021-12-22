@@ -20,7 +20,7 @@ The rest of the instructions assume you have ansible and packer installed.
 
 e.g. A-records mapping domains to ip of instance
 
-## Deploy Traefik with Netdata (Docker-compose)
+## Deploy Traefik with Netdata (Docker-compose from the instance)
 
 1. `ssh ubuntu@<Instance-IP>`
 
@@ -44,7 +44,7 @@ e.g. A-records mapping domains to ip of instance
 
 9. Check `${DOMAIN_TRAEFIK}` in the browser to see if ssl certificates are active. Sometimes it is necessary to `docker restart traefik` depending on timing with regards to DNS propagation. Sometimes rate limits with free tier DNS providers can cause it to take some time before traefik successfully obtains valid SSL certificates.
 
-## Provision instance with Matrix (Ansible)
+## Provision instance with Matrix (Ansible from the provisioner)
 
 1. `cd ansible`
 
