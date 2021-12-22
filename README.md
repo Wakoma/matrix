@@ -1,4 +1,4 @@
-Before beginning `cp .envrc.tpl .envrc`, edit values accordingly, and preferably use [direnv](https://direnv.net/)
+Before beginning `cp .envrc.tpl .envrc`, edit all empty values accordingly (for passwords you can generate automated ones with `pwgen -s 64 1`), and preferably use [direnv](https://direnv.net/)
 to reliably and automatically source the project's environment variables.
 
 The rest of the instructions assume you have ansible and packer installed.
