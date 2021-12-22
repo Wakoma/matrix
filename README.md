@@ -18,7 +18,7 @@ The rest of the instructions assume you have ansible and packer installed.
 
 ## Set up DNS
 
-e.g. A-records mapping domains to ip of instance
+e.g. A-records mapping domains to ip of instance. Remember to whitelist IP of instance for Namecheap API access for example.
 
 ## Deploy Traefik with Netdata (Docker-compose from the instance)
 
