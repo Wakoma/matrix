@@ -103,7 +103,7 @@ matrix_jitsi_jvb_auth_password: "{{ lookup('env', 'MATRIX_JITSI_JVB_AUTH_PASSWOR
 matrix_jitsi_jibri_recorder_password: "{{ lookup('env', 'MATRIX_JITSI_JIBRI_RECORDER_PASSWORD') }}"
 matrix_jitsi_jibri_xmpp_password: "{{ lookup('env', 'MATRIX_JITSI_JIBRI_XMPP_PASSWORD') }}"
 
-matrix_jitsi_enable_auth: true
+matrix_jitsi_enable_auth: false
 matrix_jitsi_enable_guests: true
 
 matrix_jitsi_jvb_container_extra_arguments:
