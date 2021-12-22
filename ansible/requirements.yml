@@ -1,0 +1,14 @@
+---
+# To install: ansible-galaxy install -r requirements.yml
+roles:
+  - name: geerlingguy.docker
+    version: 4.1.1
+    source: https://galaxy.ansible.com
+
+  - name: geerlingguy.pip
+    version: 2.1.0
+    source: https://galaxy.ansible.com
+
+  - name: geerlingguy.firewall
+    version: 2.5.0
+    source: https://galaxy.ansible.com

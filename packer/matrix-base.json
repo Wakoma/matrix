@@ -1,0 +1,68 @@
+{
+  "variables": {
+    "hcloud_token": "{{env `HCLOUD_TOKEN`}}",
+    "hcloud_image": "{{env `HCLOUD_IMAGE`}}",
+    "hcloud_location": "{{env `HCLOUD_LOCATION`}}",
+    "hcloud_server_type": "{{env `HCLOUD_SERVER_TYPE`}}",
+    "root_ssh_user": "{{env `ROOT_SSH_USER`}}",
+    "primary_ssh_user": "{{env `PRIMARY_SSH_USER`}}",
+    "image_name": "{{env `IMAGE_NAME`}}"
+  },
+  "builders": [
+    {
+      "type": "hcloud",
+      "token": "{{user `hcloud_token`}}",
+      "image": "{{user `hcloud_image`}}",
+      "location": "{{user `hcloud_location`}}",
+      "server_type": "{{user `hcloud_server_type`}}",
+      "snapshot_name": "{{user `image_name`}}",
+      "ssh_username": "{{user `root_ssh_user`}}"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "ansible",
+      "user": "{{user `root_ssh_user`}}",
+      "playbook_file": "../ansible/matrix-preprovision.playbook.yml",
+      "ansible_env_vars": [
+        "ANSIBLE_HOST_KEY_CHECKING=False",
+        "ANSIBLE_FORCE_COLOR=true",
+        "ANSIBLE_VERBOSITY=0"
+      ],
+      "extra_arguments": [
+        "-e root_ssh_user={{user `root_ssh_user`}}",
+        "-e primary_ssh_user={{user `primary_ssh_user`}}"
+      ],
+      "use_proxy": false
+    },
+    {
+      "type": "ansible",
+      "user": "{{user `primary_ssh_user`}}",
+      "playbook_file": "../ansible/matrix-base.playbook.yml",
+      "ansible_env_vars": [
+        "ANSIBLE_HOST_KEY_CHECKING=False",
+        "ANSIBLE_FORCE_COLOR=true",
+        "ANSIBLE_VERBOSITY=0"
+      ],
+      "extra_arguments": [
+        "-e primary_ssh_user={{user `primary_ssh_user`}}"
+      ],
+      "use_proxy": false
+    },
+    {
+      "type": "ansible",
+      "user": "{{user `primary_ssh_user`}}",
+      "playbook_file": "../ansible/matrix-postprovision.playbook.yml",
+      "ansible_env_vars": [
+        "ANSIBLE_HOST_KEY_CHECKING=False",
+        "ANSIBLE_FORCE_COLOR=true",
+        "ANSIBLE_VERBOSITY=0"
+      ],
+      "extra_arguments": [
+        "-e root_ssh_user={{user `root_ssh_user`}}",
+        "-e primary_ssh_user={{user `primary_ssh_user`}}"
+      ],
+      "use_proxy": false
+    }
+  ]
+}

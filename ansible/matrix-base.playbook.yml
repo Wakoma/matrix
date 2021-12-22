@@ -1,0 +1,111 @@
+---
+- name: Ensure system is ready and up-to-date
+  hosts: all
+  become: yes
+  become_method: sudo
+  become_user: root
+  tasks:
+
+    - name: Wait for apt list lock (Known to cause issues sometimes)
+      raw: while fuser /var/lib/apt/lists/lock >/dev/null 2>&1; do echo 'Waiting for apt list lock.' && sleep 10; done
+      changed_when: False
+
+    - name: Ensure packages are updated
+      apt:
+        update_cache: yes
+        upgrade: dist
+        autoclean: yes
+        autoremove: yes
+    
+    - name: Install a list of packages
+      apt:
+        pkg:
+          - git
+          - direnv
+
+    - name: Register primary user's details
+      user:
+        name: "{{ primary_ssh_user }}"
+      register: primary_ssh_user_params
+
+    - name: Hook direnv into primary user's shell
+      lineinfile:
+        path: "{{ primary_ssh_user_params.home }}/.bashrc"
+        insertafter: EOF
+        line: eval "$(direnv hook bash)"
+
+- name: Ensure firewall is set up
+  hosts: all
+  become: yes
+  become_method: sudo
+  become_user: root
+  vars:
+    firewall_state: started
+    firewall_enabled_at_boot: true
+    firewall_allowed_tcp_ports:
+      - 22
+      - 80
+      - 443
+      - 3478
+      - 4443
+      - 5349
+      - 8448
+    firewall_allowed_udp_ports:
+      - 3478
+      - 5349
+      - 49152
+      - 49153
+      - 49154
+      - 49155
+      - 49156
+      - 49157
+      - 49158
+      - 49159
+      - 49160
+      - 49161
+      - 49162
+      - 49163
+      - 49164
+      - 49165
+      - 49166
+      - 49167
+      - 49168
+      - 49169
+      - 49170
+      - 49171
+      - 49172
+      - 10000
+    firewall_disable_ufw: true
+    firewall_enable_ipv6: false
+  roles:
+    - geerlingguy.firewall
+
+- name: Ensure Docker is installed
+  hosts: all
+  become: yes
+  become_method: sudo
+  become_user: root
+  vars:
+    docker_package_state: present
+    docker_package: docker-ce=5:20.10.2~3-0~ubuntu-focal
+    docker_users:
+      - "{{ primary_ssh_user }}"
+    docker_install_compose: true
+    docker_compose_version: 1.27.4
+  roles:
+    - geerlingguy.docker
+
+- name: Ensure Docker Python library is installed
+  hosts: all
+  become: yes
+  become_method: sudo
+  become_user: root
+  vars:
+    pip_executable: pip3
+    pip_package: python3-pip
+    pip_install_packages:
+      - name: docker
+        state: present
+        version: 4.4.0
+  roles:
+    - geerlingguy.pip

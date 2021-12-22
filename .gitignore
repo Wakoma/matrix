@@ -1,0 +1,12 @@
+# Tools
+.envrc
+.log
+.terraform*
+*tfstate*
+.vagrant
+.vscode
+
+local
+
+# traefik
+certs

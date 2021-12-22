@@ -1,0 +1,115 @@
+version: "3.8"
+
+networks:
+  traefik:
+    name: traefik
+  prometheus:
+    name: prometheus
+
+volumes:
+  prometheus:
+    name: prometheus
+
+services:
+  netdata:
+    container_name: netdata
+    cap_add:
+      - SYS_PTRACE
+    environment:
+      PGID: ${DOCKER_PGID}
+    hostname: ${DOMAIN_NETDATA}
+    image: netdata/netdata:v1.28.0-amd64
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.netdata.entrypoints: websecure
+      traefik.http.routers.netdata.middlewares: traefik-auth
+      traefik.http.routers.netdata.rule: Host(`${DOMAIN_NETDATA}`)
+      traefik.http.routers.netdata.tls: "true"
+      traefik.http.routers.netdata.tls.certresolver: http
+      traefik.http.services.netdata.loadbalancer.server.port: 19999
+    networks:
+      - traefik
+      - prometheus
+    restart: unless-stopped
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:v2.24.1
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.prometheus.entrypoints: websecure
+      traefik.http.routers.prometheus.middlewares: traefik-auth
+      traefik.http.routers.prometheus.rule: Host(`${DOMAIN_PROMETHEUS}`)
+      traefik.http.routers.prometheus.tls: "true"
+      traefik.http.routers.prometheus.tls.certresolver: http
+      traefik.http.services.prometheus.loadbalancer.server.port: 9090
+    networks:
+      - traefik
+      - prometheus
+    restart: unless-stopped
+    volumes:
+      - ./services/prometheus:/etc/prometheus
+      - prometheus:/prometheus
+    command: --web.enable-lifecycle  --config.file=/etc/prometheus/prometheus.yml
+
+  traefik:
+    command:
+      - --accessLog=true
+      - --api.insecure=false
+      - --api.dashboard=true
+      - --api.debug=false
+      # - --certificatesResolvers.dns.acme.dnsChallenge.delayBeforeCheck=60
+      # - --certificatesResolvers.dns.acme.dnsChallenge.provider=gandiv5
+      # - --certificatesResolvers.dns.acme.email=${ACME_EMAIL}
+      # - --certificatesResolvers.dns.acme.storage=/acme/acme.json
+      - --certificatesresolvers.http.acme.httpchallenge=true
+      - --certificatesresolvers.http.acme.httpchallenge.entrypoint=web
+      - --certificatesresolvers.http.acme.email=${ACME_EMAIL}
+      - --certificatesresolvers.http.acme.storage=/acme/acme.json
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --entryPoints.metrics.address=:8082
+      - --entrypoints.synapse.address=:8448
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      - --entrypoints.web.http.redirections.entrypoint.permanent=true
+      - --log.level=WARNING
+      - --metrics.prometheus=true
+      - --metrics.prometheus.buckets=0.100000, 0.300000, 1.200000, 5.000000
+      - --metrics.prometheus.addEntryPointsLabels=true
+      - --metrics.prometheus.addServicesLabels=true
+      - --metrics.prometheus.entryPoint=metrics
+      - --providers.docker=true
+      - --providers.docker.endpoint=unix:///var/run/docker.sock
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=traefik
+    # environment:
+    #   GANDIV5_API_KEY: ${GANDIV5_API_KEY}
+    container_name: traefik
+    image: traefik:v2.3.6
+    labels:
+      traefik.enable: "true"
+      traefik.http.middlewares.traefik-auth.basicauth.users: ${TRAEFIK_BASICAUTH_USERS}
+      traefik.http.routers.traefik.entrypoints: websecure
+      traefik.http.routers.traefik.middlewares: traefik-auth
+      traefik.http.routers.traefik.rule: Host(`${DOMAIN_TRAEFIK}`)
+      traefik.http.routers.traefik.service: api@internal
+      traefik.http.routers.traefik.tls: "true"
+      traefik.http.routers.traefik.tls.certresolver: http
+      traefik.http.services.traefik.loadbalancer.server.port: 8080
+    networks:
+      - traefik
+      - prometheus
+    ports:
+      - 80:80
+      - 443:443
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./acme:/acme
