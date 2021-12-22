@@ -1,9 +1,14 @@
 Before beginning `cp .envrc.tpl .envrc`, edit values accordingly, and preferably use [direnv](https://direnv.net/)
 to reliably and automatically source the project's environment variables.
 
+The rest of the instructions assume you have ansible and packer installed.
+
 ## Build base AMI
 
+1. If not done before, `ansible-galaxy install -r requirements.yml`
+
 1. `cd packer`
+
 
 1. `packer build matrix-base.json`
 
