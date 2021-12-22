@@ -32,7 +32,7 @@ e.g. A-records mapping domains to ip of instance
 
 1. `git clone git@github.com:Wakoma/matrix.git` (git checkout to correct branch)
 
-1. `cd /home/ubuntu/v-stack/matrix-server`
+1. `cd /home/ubuntu/matrix`
 
 1. `cp .envrc.tpl .envrc` and edit values of `.envrc` as appropriate
 
