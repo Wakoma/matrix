@@ -9,6 +9,10 @@
 #
 # Example value: example.com
 matrix_domain: "{{ lookup('env', 'DOMAIN') }}"
+matrix_server_fqn_matrix: "{{ lookup('env', 'DOMAIN_MATRIX') }}"
+matrix_server_fqn_dimension: "{{ lookup('env', 'DOMAIN_DIMENSION') }}"
+matrix_server_fqn_element: "{{ lookup('env', 'DOMAIN_ELEMENT') }}"
+matrix_server_fqn_jitsi: "{{ lookup('env', 'DOMAIN_JITSI') }}"
 
 matrix_postgres_connection_password: "{{ lookup('env', 'MATRIX_POSTGRES_CONNECTION_PASSWORD') }}"
 
