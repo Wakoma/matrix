@@ -99,14 +99,15 @@ In summary:
 15. Make changes to `inventory/host_vars/${DOMAIN_MATRIX}/vars.yml`
     e.g.
 
-      - To configure dimension you need to read and uncomment block starting with line, `## The following block can only be uncommented on a second run`
-      - Supply valid values for `matrix_dimension_admins` (e.g. `@<user>:{{ matrix_domain }}` where `<user>` is substituted for user created at step 12.)
       - Create dedicated dimension non-admin user (through the synapse admin portal, `@dimension:${DOMAIN}` is a good name), then fill in appropriate value for `MATRIX_DIMENSION_ACCESS_TOKEN` (see step 14.)
+      - To configure dimension you need to read and uncomment block starting with line, `## The following block can only be uncommented on a second run`
+      - Supply valid values for `matrix_dimension_admins` (e.g. `@dimension:{{ matrix_domain }}` or a user created as in first step of this block
+      
 16. Subsequent runs: `ansible-playbook -i inventory/hosts setup.yml --tags=setup-all,start`
 
 ## Manual steps to follow
- - [Register Jitsi users](https://github.com/Wakoma/matrix/blob/main/ansible/matrix-docker-ansible-deploy/docs/configuring-playbook-jitsi.md#required-if-configuring-jitsi-with-internal-authentication-register-new-users)
+ - Optional, only if Jitsi was configured with auth: [Register Jitsi users](https://github.com/Wakoma/matrix/blob/main/ansible/matrix-docker-ansible-deploy/docs/configuring-playbook-jitsi.md#required-if-configuring-jitsi-with-internal-authentication-register-new-users)
    e.g `docker exec matrix-jitsi-prosody prosodyctl --config /config/prosody.cfg.lua register <USERNAME> matrix-jitsi-web <PASSWORD>`
 
  - Note, it is not possible to configure dimension by config files
-   e.g. To set local jitsi server, in Element, go to Manage Integrations → Settings → Widgets → Jitsi Conference Settings and set Jitsi Domain and Jitsi Script URL appropriately.
+   e.g. To set local jitsi server to room, in Element on room settings, go to Integrations Manager (Add widgets, bridges & bots) → Jitsi Conference and set Jitsi Domain and Jitsi Script URL appropriately.
