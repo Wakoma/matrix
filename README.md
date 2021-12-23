@@ -95,7 +95,7 @@ In summary:
 
 ## Edit templates and rerun
 
-14. Read about how to [configure playbook for dimension by retrieving an access token](https://github.com/Wakoma/matrix/blob/main/matrix/ansible/matrix-docker-ansible-deploy/docs/configuring-playbook-dimension.md#access-token)
+14. Read about how to [configure playbook for dimension by retrieving an access token](https://github.com/Wakoma/matrix/blob/main/ansible/matrix-docker-ansible-deploy/docs/configuring-playbook-dimension.md#access-token)
 15. Make changes to `inventory/host_vars/${DOMAIN_MATRIX}/vars.yml`
     e.g.
 
@@ -105,7 +105,7 @@ In summary:
 16. Subsequent runs: `ansible-playbook -i inventory/hosts setup.yml --tags=setup-all,start`
 
 ## Manual steps to follow
- - [Register Jitsi users](https://github.com/Wakoma/matrix/blob/main/matrix/ansible/matrix-docker-ansible-deploy/docs/configuring-playbook-jitsi.md#required-if-configuring-jitsi-with-internal-authentication-register-new-users)
+ - [Register Jitsi users](https://github.com/Wakoma/matrix/blob/main/ansible/matrix-docker-ansible-deploy/docs/configuring-playbook-jitsi.md#required-if-configuring-jitsi-with-internal-authentication-register-new-users)
    e.g `docker exec matrix-jitsi-prosody prosodyctl --config /config/prosody.cfg.lua register <USERNAME> matrix-jitsi-web <PASSWORD>`
 
  - Note, it is not possible to configure dimension by config files
