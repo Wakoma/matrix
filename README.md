@@ -54,7 +54,7 @@ e.g. A-records mapping matrix domain to ip of instance, the rest can be CNAME ma
 
 4. `cp host-vars.yml.tpl matrix-docker-ansible-deploy/inventory/host_vars/${DOMAIN_MATRIX}/vars.yml`
 
-5. `sed -i "s/<your-domain>/${DOMAIN}/g" matrix-docker-ansible-deploy/inventory/hosts`
+5. `sed -i "s/<your-matrix-domain>/${DOMAIN_MATRIX}/g" matrix-docker-ansible-deploy/inventory/hosts`
 
 6. Continue following docs of [matrix-docker-ansible-deploy](https://github.com/spantaleev/matrix-docker-ansible-deploy) repo
 
