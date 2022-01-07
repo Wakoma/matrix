@@ -26,6 +26,7 @@ matrix_nginx_proxy_https_enabled: false
 # (Traefik will proxy directly into the containers)
 matrix_nginx_proxy_container_http_host_bind_port: ''
 matrix_nginx_proxy_container_federation_host_bind_port: ''
+matrix_nginx_proxy_base_domain_serving_enabled: true
 
 # Disable Coturn because it needs SSL certs
 # (Clients can, though exposing IP address, use Matrix.org TURN)
@@ -40,7 +41,7 @@ matrix_nginx_proxy_container_extra_arguments:
   - '--label "traefik.enable=true"'
 
   # The Nginx proxy container will receive traffic from these subdomains
-  - '--label "traefik.http.routers.matrix-nginx-proxy.rule=Host(`{{ matrix_server_fqn_matrix }}`,`{{ matrix_server_fqn_element }}`,`{{ matrix_server_fqn_dimension }}`,`{{ matrix_server_fqn_jitsi }}`)"'
+  - '--label "traefik.http.routers.matrix-nginx-proxy.rule=Host(`{{ matrix_domain }}`,`{{ matrix_server_fqn_matrix }}`,`{{ matrix_server_fqn_element }}`,`{{ matrix_server_fqn_dimension }}`,`{{ matrix_server_fqn_jitsi }}`)"'
 
   # (The 'web-secure' entrypoint must bind to port 443 in Traefik config)
   - '--label "traefik.http.routers.matrix-nginx-proxy.entrypoints=websecure"'
