@@ -49,6 +49,7 @@ matrix_nginx_proxy_container_extra_arguments:
 
   # The Nginx proxy container will receive traffic from these subdomains
   - '--label "traefik.http.routers.matrix-nginx-proxy.rule=Host(`{{ matrix_domain }}`,`{{ matrix_server_fqn_matrix }}`,`{{ matrix_server_fqn_element }}`,`{{ matrix_server_fqn_dimension }}`,`{{ matrix_server_fqn_jitsi }}`)"'
+  - '--label "traefik.http.routers.matrix-nginx-proxy.service=matrix-nginx-proxy"'
 
   # (The 'websecure' entrypoint must bind to port 443 in Traefik config)
   - '--label "traefik.http.routers.matrix-nginx-proxy.entrypoints=websecure"'
@@ -61,6 +62,7 @@ matrix_nginx_proxy_container_extra_arguments:
 
   # The Nginx proxy container will receive traffic from these subdomains
   - '--label "traefik.http.routers.matrix-nginx-proxy-federation.rule=Host(`{{ matrix_domain }}`)"'
+  - '--label "traefik.http.routers.matrix-nginx-proxy-federation.service=matrix-nginx-proxy-federation"'
 
   # (The 'synapse' entrypoint must bind to port 8448 in Traefik config)
   - '--label "traefik.http.routers.matrix-nginx-proxy-federation.entrypoints=synapse"'
