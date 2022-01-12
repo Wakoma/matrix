@@ -16,6 +16,8 @@ matrix_server_fqn_jitsi: "{{ lookup('env', 'DOMAIN_JITSI') }}"
 
 matrix_postgres_connection_password: "{{ lookup('env', 'MATRIX_POSTGRES_CONNECTION_PASSWORD') }}"
 
+matrix_nginx_proxy_base_domain_serving_enabled: true
+
 # Disable generation and retrieval of SSL certs
 matrix_ssl_retrieval_method: none
 
@@ -26,7 +28,12 @@ matrix_nginx_proxy_https_enabled: false
 # (Traefik will proxy directly into the containers)
 matrix_nginx_proxy_container_http_host_bind_port: ''
 matrix_nginx_proxy_container_federation_host_bind_port: ''
-matrix_nginx_proxy_base_domain_serving_enabled: true
+
+# Trust the reverse proxy to send the correct `X-Forwarded-Proto` header as it is handling the SSL connection.
+matrix_nginx_proxy_trust_forwarded_proto: true
+
+# Trust and use the other reverse proxy's `X-Forwarded-For` header.
+matrix_nginx_proxy_x_forwarded_for: '$proxy_add_x_forwarded_for'
 
 # Disable Coturn because it needs SSL certs
 # (Clients can, though exposing IP address, use Matrix.org TURN)
@@ -43,14 +50,26 @@ matrix_nginx_proxy_container_extra_arguments:
   # The Nginx proxy container will receive traffic from these subdomains
   - '--label "traefik.http.routers.matrix-nginx-proxy.rule=Host(`{{ matrix_domain }}`,`{{ matrix_server_fqn_matrix }}`,`{{ matrix_server_fqn_element }}`,`{{ matrix_server_fqn_dimension }}`,`{{ matrix_server_fqn_jitsi }}`)"'
 
-  # (The 'web-secure' entrypoint must bind to port 443 in Traefik config)
+  # (The 'websecure' entrypoint must bind to port 443 in Traefik config)
   - '--label "traefik.http.routers.matrix-nginx-proxy.entrypoints=websecure"'
 
-  # (The 'default' certificate resolver must be defined in Traefik config)
-  - '--label "traefik.http.routers.matrix-nginx-proxy.tls.certresolver=dns"'
+  # (The 'dns' certificate resolver must be defined in Traefik config)
+  - '--label "traefik.http.routers.matrix-nginx-proxy.tls.certResolver=dns"'
 
   # The Nginx proxy container uses port 8080 internally
   - '--label "traefik.http.services.matrix-nginx-proxy.loadbalancer.server.port=8080"'
+
+  # The Nginx proxy container will receive traffic from these subdomains
+  - '--label "traefik.http.routers.matrix-nginx-proxy-federation.rule=Host(`{{ matrix_domain }}`)"'
+
+  # (The 'synapse' entrypoint must bind to port 8448 in Traefik config)
+  - '--label "traefik.http.routers.matrix-nginx-proxy-federation.entrypoints=synapse"'
+
+  # (The 'dns' certificate resolver must be defined in Traefik config)
+  - '--label "traefik.http.routers.matrix-nginx-proxy-federation.tls.certResolver=dns"'
+
+  # The Nginx proxy container uses port 8448 internally for federation
+  - '--label "traefik.http.services.matrix-nginx-proxy-federation.loadbalancer.server.port=8448"'
 
 matrix_synapse_container_extra_arguments:
   # May be unnecessary depending on Traefik config, but can't hurt
@@ -62,7 +81,7 @@ matrix_synapse_container_extra_arguments:
   # (The 'synapse' entrypoint must bind to port 8448 in Traefik config)
   - '--label "traefik.http.routers.matrix-synapse.entrypoints=synapse"'
 
-  # (The 'default' certificate resolver must be defined in Traefik config)
+  # (The 'dns' certificate resolver must be defined in Traefik config)
   - '--label "traefik.http.routers.matrix-synapse.tls.certResolver=dns"'
 
   # The Synapse container uses port 8048 internally
@@ -92,7 +111,7 @@ matrix_synapse_admin_container_extra_arguments:
     # (Define your entrypoint)
     - '--label "traefik.http.routers.matrix-synapse-admin.entrypoints=websecure"'
 
-    # (The 'default' certificate resolver must be defined in Traefik config)
+    # (The 'dns' certificate resolver must be defined in Traefik config)
     - '--label "traefik.http.routers.matrix-synapse-admin.tls.certResolver=dns"'
 
     # The Synapse Admin container uses port 80 by default

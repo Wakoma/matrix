@@ -126,6 +126,8 @@ services:
       target: 80
     - published: 443
       target: 443
+    - published: 8448
+      target: 8448
     restart: unless-stopped
     volumes:
     - acme:/acme:rw
